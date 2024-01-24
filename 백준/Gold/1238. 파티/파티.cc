@@ -1,4 +1,4 @@
-#define _CRT_SECURE_NO_WARNINGS
+/*#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <bits/stdc++.h>
 using namespace std;
@@ -55,12 +55,83 @@ int main() {
 		maps[start][end] = cost;
 	}
 	int max = 0;
-	dijkstra(X);
 	init_found();
 	for (int i=1;i <= N; i++) {
 		dijkstra(i);
 		int temp = D[i][X];
 		init_found();
+		dijkstra(X);
+		temp += D[X][i];
+		init_found();
+		if (max < temp) max = temp;
+	}
+
+	cout << max;
+
+	return 0;
+}*/
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <bits/stdc++.h>
+using namespace std;
+int maps[1001][1001];
+int D[1001][1001];
+int found[1001];
+int N, M, X;
+void init_found() {
+	for (int i = 1; i <= N; i++) {
+		found[i] = 0;
+	}
+}
+void dijkstra(int start, int end) {
+	priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+	pq.push({ 0, start });
+	//found[start] = 1;
+	while (!pq.empty()) {
+		pair<int, int> p = pq.top();
+		int v = p.second;
+		int cost = p.first;
+		pq.pop();
+		if (found[v]) continue;
+		found[v] = 1;
+		if (v == end) break;
+		for (int i = 1; i <= N; i++) {
+			if (!found[i]) {
+				if (D[start][v] + maps[v][i] <= D[start][i]) {
+					D[start][i] = D[start][v] + maps[v][i];
+					pq.push({ D[start][i],i });
+				}
+			}
+		}
+	}
+
+}
+int main() {
+	int start, end, cost;
+	cin >> N >> M >> X;
+	for (int i = 1; i <= N; i++) {
+		for (int j = 1; j <= N; j++) {
+			if (i == j) {
+				maps[i][j] = 0;
+				D[i][j] = 0;
+			}
+			else {
+				maps[i][j] = 100000;
+				D[i][j] = 100000;
+			}
+		}
+	}
+
+	for (int i = 0; i < M; i++) {
+		cin >> start >> end >> cost;
+		maps[start][end] = cost;
+	}
+	int max = 0;
+	for (int i = 1; i <= N; i++) {
+		dijkstra(i, X);
+		int temp = D[i][X];
+		init_found();
+		dijkstra(X, i);
 		temp += D[X][i];
 		init_found();
 		if (max < temp) max = temp;
