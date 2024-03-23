@@ -20,7 +20,6 @@ int dfs(int r, int state) {
 	if (dp[r][state] != -1) return dp[r][state];
 
 	int cnt = 0;
-	for (int i = 0; i < M; i++) {
 		for (int bit = 0; bit < (1 << M); bit++) {
 			bool ispossible = true;
 			cnt = 0;
@@ -42,7 +41,7 @@ int dfs(int r, int state) {
 
 			if (ispossible) dp[r][state] = max(dp[r][state], dfs(r + 1, bit) + cnt);
 		}
-	}
+
 	return dp[r][state];
 }
 
